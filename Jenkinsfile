@@ -1,13 +1,18 @@
 pipeline {
-	agent any
+	agent {
+		docker{
+			image "maven:3.8.3-jdk-11"
+			label "docker"
+		}
+	}
 	
 	stages {
 		stage ('Compile Stage'){
 			steps{
-				withMaven(maven: 'Maven3.8.3'){
+				
 					sh 'mvn clean compile'
-					
-				}
+					sh 'mvn clean install'
+				
 			}
 			
 		}
@@ -19,13 +24,10 @@ pipeline {
 				}
 			}
         }	
-		stage ('Deployment Stage'){
-			steps{
-				withMaven(maven: 'Maven3.8.3'){
-					sh 'mvn deploy'
-				}
+		post {
+			always{
+				cleanWs
 			}
-			
 		}
 			
 		}
